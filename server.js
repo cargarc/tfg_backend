@@ -1,0 +1,35 @@
+require("dotenv").config(); // Carga las variables de entorno
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./src/routes/authRoutes");
+const tasksRoutes = require("./src/routes/tasksRoutes");
+
+// Inicializar Express
+const app = express();
+
+// Middlewares
+app.use(cors()); // Permite peticiones desde cualquier origen (en desarrollo)
+app.use(express.json()); // Habilita el parseo de JSON en las peticiones
+
+// Rutas públicas (sin autenticación)
+app.use("/api/auth", authRoutes);
+
+// Rutas protegidas (requieren token JWT)
+app.use("/api/tasks", require("./src/middlewares/authMiddleware"), tasksRoutes);
+
+// Ruta de prueba
+app.get("/", (req, res) => {
+  res.send("Backend de Task Manager funcionando!");
+});
+
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
