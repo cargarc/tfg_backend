@@ -13,7 +13,7 @@ const User = {
   create: async (userData) => {
     const { email, password, name } = userData;
     const [result] = await pool.query(
-      "INSERT INTO EmpleadoPropio (email, password, name) VALUES (?, ?, ?)",
+      "INSERT INTO EmpleadoPropio (email,contraseña) VALUES (?, ?)",
       [email, password, name]
     );
     return result.insertId;
